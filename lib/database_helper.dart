@@ -108,11 +108,10 @@ class DatabaseHelper {
     });
   }
 
-  Future<void> updateTelemetryAcknowledged(String timeStamp, int alarmAcknowledged) async {
+  Future<void> updateTelemetryAcknowledged(
+      String timeStamp, int alarmAcknowledged) async {
     Database _db = await database();
     await _db.rawUpdate(
         "UPDATE temperatureTelemetry SET alarmAcknowledged = '$alarmAcknowledged' WHERE timeStamp = '$timeStamp'");
-
-    print("updated to $alarmAcknowledged with timeStamp: $timeStamp");
   }
 }

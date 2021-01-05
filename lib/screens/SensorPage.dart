@@ -94,14 +94,13 @@ class _SensorPageState extends State<SensorPage> {
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () async {
-                              if (snapshot.data[index].alarmAcknowledged == null) {
+                              if (snapshot.data[index].alarmAcknowledged == 0) {
                                 await _dbHelper.updateTelemetryAcknowledged(
                                     snapshot.data[index].timeStamp, 1);
                               } else {
                                 await _dbHelper.updateTelemetryAcknowledged(
                                     snapshot.data[index].timeStamp, 0);
                               }
-                              print(snapshot.data[index].alarmAcknowledged.toString());
                               setState(() {});
                             },
                             child: AlarmTriggeredWidget(
