@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'models/temperatureSensor.dart';
@@ -27,33 +28,39 @@ class DatabaseHelper {
   }
 
   void insertDummyData() {
+
     TemperatureSensor sensor1 = TemperatureSensor(
         sensorName: "Sensor #1", sensorLocation: "Hjem", sensorGroup: "Kontor");
 
     TemperatureSensor sensor2 = TemperatureSensor(
         sensorName: "Sensor #2", sensorLocation: "Hjem", sensorGroup: "Køkken");
 
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('dd-MM-yyyy – kk:mm').format(now);
+
     TemperatureTelemetry telemetry1 = TemperatureTelemetry(
-        timeStamp: DateTime.now().toString(),
+        timeStamp: formattedDate,
         temperature: 30.5,
         sensorLocation: "Hjem",
         sensorGroup: "Kontor",
         alarmTriggered: 1,
         alarmAcknowledged: 0);
 
+
     TemperatureTelemetry telemetry2 = TemperatureTelemetry(
-        timeStamp: DateTime.now().toString(),
+        timeStamp: formattedDate,
         temperature: 33.0,
         sensorLocation: "Hjem",
-        sensorGroup: "Køkken",
+        sensorGroup: "Kontor",
         alarmTriggered: 1,
         alarmAcknowledged: 0);
 
+
     TemperatureTelemetry telemetry3 = TemperatureTelemetry(
-        timeStamp: DateTime.now().toString(),
+        timeStamp: formattedDate,
         temperature: 35.4,
         sensorLocation: "Hjem",
-        sensorGroup: "Køkken",
+        sensorGroup: "Kontor",
         alarmTriggered: 1,
         alarmAcknowledged: 0);
 
@@ -77,7 +84,7 @@ class DatabaseHelper {
       TemperatureTelemetry telemetry) async {
     Database _db = await database();
     await _db.insert('temperatureTelemetry', telemetry.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
+        conflictAlgorithm: ConflictAlgorithm.ignore);
   }
 
   Future<List<TemperatureSensor>> getTemperatureSensors() async {
@@ -97,6 +104,21 @@ class DatabaseHelper {
     Database _db = await database();
     List<Map<String, dynamic>> sensorMap = await _db.rawQuery(
         "SELECT * FROM temperatureTelemetry WHERE sensorLocation = '$sensorLocation' AND sensorGroup = '$sensorGroup' AND alarmTriggered = 1");
+    return List.generate(sensorMap.length, (index) {
+      return TemperatureTelemetry(
+          timeStamp: sensorMap[index]['timeStamp'],
+          temperature: sensorMap[index]['temperature'],
+          sensorLocation: sensorMap[index]['sensorLocation'],
+          sensorGroup: sensorMap[index]['sensorGroup'],
+          alarmTriggered: sensorMap[index]['alarmTriggered'],
+          alarmAcknowledged: sensorMap[index]['alarmAcknowledged']);
+    });
+  }
+
+  Future<List<TemperatureTelemetry>> getAllTriggeredTemperatureTelemetry() async {
+    Database _db = await database();
+    List<Map<String, dynamic>> sensorMap = await _db.rawQuery(
+        "SELECT * FROM temperatureTelemetry WHERE alarmTriggered = 1 AND alarmAcknowledged = 0");
     return List.generate(sensorMap.length, (index) {
       return TemperatureTelemetry(
           timeStamp: sensorMap[index]['timeStamp'],

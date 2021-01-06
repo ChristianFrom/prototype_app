@@ -73,7 +73,7 @@ class AlarmTriggeredWidget extends StatelessWidget {
               right: 12.0,
             ),
             decoration: BoxDecoration(
-                color: alarmAcknowledged ? Color(0xFF7349FE) : Colors.transparent,
+                color: alarmAcknowledged ? Colors.green : Colors.transparent,
                 borderRadius: BorderRadius.circular(6.0),
                 border: alarmAcknowledged ? null : Border.all(
                   color: Color(0xFF86829D),
@@ -89,7 +89,7 @@ class AlarmTriggeredWidget extends StatelessWidget {
               "Alarm Triggered: $timeStamp at $temperature°C " ?? "(No data available...)",
               style: TextStyle(
                 color: alarmAcknowledged ? Color(0xFF211511) : Color(0xFF86829D),
-                fontSize: 16.0,
+                fontSize: 14.0,
                 fontWeight: alarmAcknowledged ? FontWeight.bold : FontWeight.w500,
               ),
             ),
@@ -107,3 +107,4 @@ class NoGlowScrollBehavior extends ScrollBehavior {
     return child;
   }
 }
+

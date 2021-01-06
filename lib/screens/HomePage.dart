@@ -13,12 +13,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-     //_dbHelper.insertDummyData();
+    //_dbHelper.insertDummyData();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+
+    });
     return Scaffold(
         body: SafeArea(
           child: Container(

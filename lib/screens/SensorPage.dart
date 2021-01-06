@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prototype_app/database_helper.dart';
 import 'package:prototype_app/models/temperatureSensor.dart';
 import 'package:prototype_app/widgets.dart';
+import 'package:vibrate/vibrate.dart';
 
 class SensorPage extends StatefulWidget {
   final TemperatureSensor sensor;
@@ -21,6 +22,7 @@ class _SensorPageState extends State<SensorPage> {
 
   @override
   void initState() {
+
     if (widget.sensor != null) {
       sensorName = widget.sensor.sensorName;
       sensorLocation = widget.sensor.sensorLocation;
@@ -71,6 +73,7 @@ class _SensorPageState extends State<SensorPage> {
                 Padding(
                     padding: EdgeInsets.only(
                       left: 24.0,
+                      bottom: 10.0,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,33 +91,55 @@ class _SensorPageState extends State<SensorPage> {
                   future: _dbHelper.getTriggeredTemperatureTelemetry(
                       sensorLocation, sensorGroup),
                   builder: (context, snapshot) {
-                    return Expanded(
-                      child: ListView.builder(
-                        itemCount: snapshot.data.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () async {
-                              if (snapshot.data[index].alarmAcknowledged == 0) {
-                                await _dbHelper.updateTelemetryAcknowledged(
-                                    snapshot.data[index].timeStamp, 1);
-                              } else {
-                                await _dbHelper.updateTelemetryAcknowledged(
-                                    snapshot.data[index].timeStamp, 0);
-                              }
-                              setState(() {});
+                    if (snapshot.data.length == 0) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          top: 80,
+                        ),
+                        child: Center(child: Text("No alarms triggered!", style: TextStyle(
+                          fontSize: 26.0,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF86829D),
+                        ),)),
+                      );
+                    } else {
+                      return Container(
+                        width: double.infinity,
+                        height: 200,
+                        child: ScrollConfiguration(
+                          behavior: NoGlowScrollBehavior(),
+                          child: ListView.builder(
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () async {
+                                  var _type = FeedbackType.medium;
+                                  Vibrate.feedback(_type);
+                                  if (snapshot.data[index].alarmAcknowledged ==
+                                      0) {
+                                    await _dbHelper.updateTelemetryAcknowledged(
+                                        snapshot.data[index].timeStamp, 1);
+                                  } else {
+                                    await _dbHelper.updateTelemetryAcknowledged(
+                                        snapshot.data[index].timeStamp, 0);
+                                  }
+                                  setState(() {});
+                                },
+                                child: AlarmTriggeredWidget(
+                                  timeStamp: snapshot.data[index].timeStamp,
+                                  temperature: snapshot.data[index].temperature,
+                                  alarmAcknowledged:
+                                      snapshot.data[index].alarmAcknowledged ==
+                                              0
+                                          ? false
+                                          : true,
+                                ),
+                              );
                             },
-                            child: AlarmTriggeredWidget(
-                              timeStamp: snapshot.data[index].timeStamp,
-                              temperature: snapshot.data[index].temperature,
-                              alarmAcknowledged:
-                                  snapshot.data[index].alarmAcknowledged == 0
-                                      ? false
-                                      : true,
-                            ),
-                          );
-                        },
-                      ),
-                    );
+                          ),
+                        ),
+                      );
+                    }
                   },
                 ), // Triggered alarms list
               ],
