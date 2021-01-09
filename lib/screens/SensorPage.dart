@@ -25,6 +25,7 @@ class _SensorPageState extends State<SensorPage> {
         .collection('TemperatureTelemetry')
         .where('sensorGroup', isEqualTo: sensorGroup)
         .where('sensorLocation', isEqualTo: sensorLocation)
+        .where('alarmTriggered', isEqualTo: true)
         .get();
     documentCount = qSnap.docs.length;
     print("Total docs: " + documentCount.toString());
@@ -162,18 +163,12 @@ class _SensorPageState extends State<SensorPage> {
                         );
                       } else
                         return Padding(
-                          padding: const EdgeInsets.only(
-                            top: 50.0
-
-                          ),
+                          padding: const EdgeInsets.only(top: 50.0),
                           child: Center(
                               child: Text("No alarms triggered!",
                                   style: TextStyle(
                                       fontSize: 22.0,
-                                      color: Color(0xFF86829D)
-                                  )
-                              )
-                          ),
+                                      color: Color(0xFF86829D)))),
                         );
                     }),
 
