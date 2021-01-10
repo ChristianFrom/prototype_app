@@ -35,13 +35,13 @@ class _HomeDBState extends State<HomeDB> {
         future: _initialization,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Text("Snapshot error");
+            return Center(child: Text("Snapshot error"));
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Home();
           }
 
-          return Text("Loading");
+          return Center(child: Text("Loading"));
         });
   }
 }
@@ -53,16 +53,24 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _currentIndex = 0;
-  int alarmCount = 0;
-  DatabaseHelper _dbHelper = DatabaseHelper();
-
+  int documentCount = 0;
   final List<Widget> _children = [
     HomePage(),
     NotificationsPage(),
     SettingsPage(),
   ];
 
-  bool alarmed = true;
+  void countDocs() async {
+    final QuerySnapshot qSnap = await FirebaseFirestore.instance
+        .collection('TemperatureTelemetry')
+        .where('alarmTriggered', isEqualTo: true)
+        .where('alarmAcknowledged', isEqualTo: false)
+        .get();
+    documentCount = qSnap.docs.length;
+    print("alarms: " + documentCount.toString());
+  }
+
+  bool alarmed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -77,11 +85,15 @@ class _HomeState extends State<Home> {
             title: Text('Home'),
           ),
           new BottomNavigationBarItem(
-            icon: FutureBuilder(
+            icon: StreamBuilder(
               initialData: [],
-              future: _dbHelper.getAllTriggeredTemperatureTelemetry(),
+              stream: FirebaseFirestore.instance
+                  .collection("TemperatureTelemetry")
+                  .where('alarmTriggered', isEqualTo: true)
+                  .where('alarmAcknowledged', isEqualTo: false)
+                  .snapshots(),
               builder: (context, snapshot) {
-                alarmCount = snapshot.data.length;
+                countDocs();
                 //print("total alarms triggered" + alarmCount.toString());
                 return new Stack(children: <Widget>[
                   new Icon(Icons.notifications),
@@ -92,9 +104,7 @@ class _HomeState extends State<Home> {
 
                     child: new Icon(Icons.brightness_1,
                         size: 8.0,
-                        color: alarmCount > 0
-                            ? Colors.redAccent
-                            : Colors.transparent),
+                        color: documentCount > 0 ? Colors.redAccent : Colors.transparent),
                   )
                 ]);
               },
@@ -110,6 +120,7 @@ class _HomeState extends State<Home> {
 
   void _onItemTapped(int index) {
     setState(() {
+      countDocs();
       _currentIndex = index;
     });
   }
