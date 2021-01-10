@@ -15,9 +15,10 @@ class _HomePageState extends State<HomePage> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   int documentCount;
 
+
   void countDocs() async {
-    final QuerySnapshot qSnap =
-        await Firestore.instance.collection('SensorTable').get();
+    final QuerySnapshot qSnap = await Firestore.instance
+        .collection('SensorTable').get();
     documentCount = qSnap.docs.length;
     print("Total docs: " + documentCount.toString());
   }
@@ -52,9 +53,7 @@ class _HomePageState extends State<HomePage> {
                     )),
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection("SensorTable")
-                          .snapshots(),
+                      stream: FirebaseFirestore.instance.collection("SensorTable").snapshots(),
                       builder: (BuildContext context,
                           AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.hasData) {
@@ -69,8 +68,8 @@ class _HomePageState extends State<HomePage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => SensorPage(
-                                                msg: snapshot.data.docs[index],
-                                              )),
+                                            msg: snapshot.data.docs[index],
+                                          )),
                                     ).then((value) {
                                       Home().createState();
                                     });
@@ -86,8 +85,8 @@ class _HomePageState extends State<HomePage> {
                               },
                             ),
                           );
-                        } else
-                          return Text("No data available...");
+                        } else return Text("No data available...");
+
                       }),
                 )
               ],
