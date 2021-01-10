@@ -12,9 +12,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   void initState() {
-    super.initState();
     useAWS = false;
     useAzure = false;
+    super.initState();
     getPref();
   }
 
