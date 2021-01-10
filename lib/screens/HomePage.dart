@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:prototype_app/database_helper.dart';
 import 'package:prototype_app/main.dart';
 import 'package:prototype_app/screens/SensorPage.dart';
 import 'package:prototype_app/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:prototype_app/models/temperatureSensor.dart';
 
 class HomePage extends StatefulWidget {
   @override
