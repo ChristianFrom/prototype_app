@@ -5,6 +5,7 @@ import 'models/temperatureSensor.dart';
 import 'models/temperatureTelemetry.dart';
 
 class DatabaseHelper {
+
   Future<Database> database() async {
     return openDatabase(
       join(await getDatabasesPath(), 'temperatureSensor.db'),

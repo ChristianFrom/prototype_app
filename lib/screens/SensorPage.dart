@@ -130,19 +130,12 @@ class _SensorPageState extends State<SensorPage> {
                                           .collection("TemperatureTelemetry")
                                           .doc(snapshot.data.docs[index].id)
                                           .update({"alarmAcknowledged": true});
-                                      print("changed to true");
                                     } else {
                                       await FirebaseFirestore.instance
                                           .collection("TemperatureTelemetry")
                                           .doc(snapshot.data.docs[index].id)
                                           .update({"alarmAcknowledged": false});
-                                      print("changed to false");
                                     }
-
-                                    print("alarm pressed changed to: " +
-                                        snapshot.data.docs[index]
-                                            .data()['alarmAcknowledged']
-                                            .toString());
                                     setState(() {});
                                   },
                                   child: AlarmTriggeredWidget(

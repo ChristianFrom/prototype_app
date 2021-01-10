@@ -6,6 +6,10 @@ class TemperatureSensor {
   TemperatureSensor({this.sensorName, this.sensorLocation, this.sensorGroup});
 
   Map<String, dynamic> toMap() {
-    return {'sensorName': sensorName,'sensorLocation': sensorLocation, 'sensorGroup': sensorGroup};
+    return {
+      'sensorName': sensorName,
+      'sensorLocation': sensorLocation,
+      'sensorGroup': sensorGroup
+    };
   }
 }
