@@ -13,6 +13,13 @@ class _HomePageState extends State<HomePage> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   int documentCount;
 
+  void countDocs() async {
+    final QuerySnapshot qSnap =
+        await Firestore.instance.collection('SensorTable').get();
+    documentCount = qSnap.docs.length;
+    print("Total docs: " + documentCount.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     setState(() {});

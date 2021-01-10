@@ -113,7 +113,7 @@ class _SensorPageState extends State<SensorPage> {
                       if (snapshot.hasData && documentCount != 0) {
                         return Container(
                           width: double.infinity,
-                          height: 280,
+                          height: 200,
                           child: ScrollConfiguration(
                             behavior: NoGlowScrollBehavior(),
                             child: ListView.builder(
@@ -171,40 +171,6 @@ class _SensorPageState extends State<SensorPage> {
                                       color: Color(0xFF86829D)))),
                         );
                     }),
-
-                Expanded(
-                  child: Center(
-                    child: StreamBuilder(
-                        stream: FirebaseFirestore.instance
-                            .collection("TemperatureTelemetry")
-                            .where('sensorGroup', isEqualTo: sensorGroup)
-                            .where('sensorLocation', isEqualTo: sensorLocation)
-                            .snapshots(),
-                        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (!snapshot.hasData) {
-                            return Text("No Data");
-                          } else {
-                            var temperature = snapshot.data.docs.last.data()['temperature'];
-                            var alarmTriggered = snapshot.data.docs.last.data()['alarmTriggered'];
-                            print(snapshot.data.docs.last.data());
-
-                            return Container(
-                              width: 200,
-                              height: 200,
-                              decoration: BoxDecoration(
-                                  border: Border.all(width: 3, color: alarmTriggered ? Colors.red : Colors.green),
-                                  borderRadius: BorderRadius.all(Radius.circular(200)),
-                                  //shape: BoxShape.circle,
-                                  color: Colors.white),
-                              child: Center(child: Text(temperature + "°C", style: TextStyle(
-                                fontSize: 45.0,
-                                fontWeight: FontWeight.bold,
-                              ),)),
-                            );
-                          }
-                        }),
-                  ),
-                )
 
                 // Description Editing
                 /* FutureBuilder(

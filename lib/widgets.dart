@@ -68,23 +68,17 @@ class SensorCardWidget extends StatelessWidget {
                       left: 120.0
                     ),
                     child: Container(
-                      width: 80,
-                      height: 80,
+                      width: 75,
+                      height: 75,
                       decoration: BoxDecoration(
                           border: Border.all(width: 3, color: alarmTriggered ? Colors.red : Colors.green),
                           borderRadius: BorderRadius.all(Radius.circular(200)),
                           //shape: BoxShape.circle,
                           color: Colors.white),
-                      child: Center(child: Padding(
-                        padding: const EdgeInsets.only(
-                          left: 5.0,
-                          right: 5.0,
-                        ),
-                        child: Text(temperature + "°C", style: TextStyle(
-                          fontSize: 19.0,
-                          fontWeight: FontWeight.bold,
-                        ),),
-                      )),
+                      child: Center(child: Text(temperature + "°C", style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),)),
                     ),
                   );
                 }
