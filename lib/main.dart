@@ -1,17 +1,12 @@
 import 'dart:async';
-import 'dart:io';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
 import 'package:prototype_app/database_helper.dart';
-import 'package:prototype_app/models/temperatureTelemetry.dart';
 import 'package:prototype_app/screens/HomePage.dart';
 import 'package:prototype_app/screens/NotificationsPage.dart';
 import 'package:prototype_app/screens/SensorPage.dart';
 import 'package:prototype_app/screens/SettingsPage.dart';
 import 'screens/HomePage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:vibrate/vibrate.dart';
-import 'package:prototype_app/widgets.dart';
 
 void main() => runApp(MyApp());
 
@@ -21,31 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Temperature Sensors',
         theme: ThemeData(primaryColor: Colors.blueGrey),
-        home: HomeDB());
-  }
-}
-
-class HomeDB extends StatefulWidget {
-  @override
-  _HomeDBState createState() => _HomeDBState();
-}
-
-class _HomeDBState extends State<HomeDB> {
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: _initialization,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text("Snapshot error");
-          }
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Home();
-          }
-
-          return Text("Loading");
-        });
+        home: Home());
   }
 }
 
@@ -85,7 +56,7 @@ class _HomeState extends State<Home> {
               future: _dbHelper.getAllTriggeredTemperatureTelemetry(),
               builder: (context, snapshot) {
                 alarmCount = snapshot.data.length;
-                //print("total alarms triggered" + alarmCount.toString());
+                print("total alarms triggered" + alarmCount.toString());
                 return new Stack(children: <Widget>[
                   new Icon(Icons.notifications),
                   new Positioned(

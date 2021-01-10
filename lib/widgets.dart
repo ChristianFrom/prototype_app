@@ -108,5 +108,3 @@ class NoGlowScrollBehavior extends ScrollBehavior {
   }
 }
 
-
-
