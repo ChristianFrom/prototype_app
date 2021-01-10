@@ -31,9 +31,14 @@ dependencies:
   google_fonts: ^1.1.0
   intl: ^0.16.1
   sqflite:
-  badges: ^1.1.6
   vibrate: ^0.0.4
+  shared_preferences: ^0.5.12+4
+  rxdart: ^0.25.0
+  http: ^0.12.0+1
   path:
+  firebase_core: ^0.5.3
+  cloud_firestore: ^0.14.4
+
 
 dev_dependencies:
   flutter_test:

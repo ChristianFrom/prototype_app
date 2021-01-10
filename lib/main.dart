@@ -1,13 +1,7 @@
 import 'dart:async';
-<<<<<<< HEAD
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-=======
-
-import 'package:flutter/material.dart';
-import 'package:prototype_app/database_helper.dart';
->>>>>>> parent of 096ea0d... Revert "Revert "Using db in the cloud""
 import 'package:prototype_app/screens/HomePage.dart';
 import 'package:prototype_app/screens/NotificationsPage.dart';
 import 'package:prototype_app/screens/SettingsPage.dart';
@@ -22,7 +16,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Temperature Sensors',
         theme: ThemeData(primaryColor: Colors.blueGrey),
-<<<<<<< HEAD
         home: HomeDB());
   }
 }
@@ -50,9 +43,6 @@ class _HomeDBState extends State<HomeDB> {
 
           return Text("Loading");
         });
-=======
-        home: Home());
->>>>>>> parent of 096ea0d... Revert "Revert "Using db in the cloud""
   }
 }
 
@@ -92,7 +82,7 @@ class _HomeState extends State<Home> {
               future: _dbHelper.getAllTriggeredTemperatureTelemetry(),
               builder: (context, snapshot) {
                 alarmCount = snapshot.data.length;
-                print("total alarms triggered" + alarmCount.toString());
+                //print("total alarms triggered" + alarmCount.toString());
                 return new Stack(children: <Widget>[
                   new Icon(Icons.notifications),
                   new Positioned(
