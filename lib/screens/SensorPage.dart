@@ -3,50 +3,31 @@ import 'package:prototype_app/database_helper.dart';
 import 'package:prototype_app/models/temperatureSensor.dart';
 import 'package:prototype_app/widgets.dart';
 import 'package:vibrate/vibrate.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SensorPage extends StatefulWidget {
-  DocumentSnapshot msg;
-  SensorPage({@required this.msg});
+  final TemperatureSensor sensor;
+
+  SensorPage({@required this.sensor});
 
   @override
   _SensorPageState createState() => _SensorPageState();
 }
 
 class _SensorPageState extends State<SensorPage> {
+  DatabaseHelper _dbHelper = DatabaseHelper();
+
   String sensorName = "";
   String sensorLocation = "";
   String sensorGroup = "";
-  int documentCount;
-  Stream telemetryStream;
-
-  void countDocs() async {
-    final QuerySnapshot qSnap = await Firestore.instance
-        .collection('TemperatureTelemetry')
-        .where('sensorGroup', isEqualTo: sensorGroup)
-        .where('sensorLocation', isEqualTo: sensorLocation)
-        .get();
-    documentCount = qSnap.docs.length;
-    print("Total docs: " + documentCount.toString());
-  }
 
   @override
   void initState() {
-    sensorName = widget.msg.id;
-    sensorLocation = widget.msg.data()['sensorLocation'];
-    sensorGroup = widget.msg.data()['sensorGroup'];
 
-    telemetryStream = FirebaseFirestore.instance
-        .collection("TemperatureTelemetry")
-        .where('sensorGroup', isEqualTo: sensorGroup)
-        .where('sensorLocation', isEqualTo: sensorLocation)
-        .where('alarmTriggered', isEqualTo: true)
-        .snapshots();
-
-    countDocs();
-    print(sensorLocation);
-    print(sensorGroup);
-    print(sensorName);
+    if (widget.sensor != null) {
+      sensorName = widget.sensor.sensorName;
+      sensorLocation = widget.sensor.sensorLocation;
+      sensorGroup = widget.sensor.sensorGroup;
+    }
 
     super.initState();
   }
@@ -104,81 +85,8 @@ class _SensorPageState extends State<SensorPage> {
                             style: TextStyle(
                                 fontSize: 16, color: Color(0xFF86829D))),
                       ],
-                    )),
-                StreamBuilder<QuerySnapshot>(
-                    stream: telemetryStream,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.hasData && documentCount != 0) {
-                        return Container(
-                          width: double.infinity,
-                          height: 200,
-                          child: ScrollConfiguration(
-                            behavior: NoGlowScrollBehavior(),
-                            child: ListView.builder(
-                              itemCount: snapshot.data.size,
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () async {
-                                    var _type = FeedbackType.medium;
-                                    Vibrate.feedback(_type);
-                                    if (snapshot.data.docs[index]
-                                            .data()['alarmAcknowledged'] ==
-                                        false) {
-                                      FirebaseFirestore.instance
-                                          .collection("TemperatureTelemetry")
-                                          .doc(snapshot.data.docs[index].id)
-                                          .update({"alarmAcknowledged": true});
-                                      print("changed to true");
-                                    } else {
-                                      await FirebaseFirestore.instance
-                                          .collection("TemperatureTelemetry")
-                                          .doc(snapshot.data.docs[index].id)
-                                          .update({"alarmAcknowledged": false});
-                                      print("changed to false");
-                                    }
-
-                                    print("alarm pressed changed to: " +
-                                        snapshot.data.docs[index]
-                                            .data()['alarmAcknowledged']
-                                            .toString());
-                                    setState(() {});
-                                  },
-                                  child: AlarmTriggeredWidget(
-                                    timeStamp: snapshot.data.docs[index].id,
-                                    temperature: double.parse(snapshot
-                                        .data.docs[index]
-                                        .data()['temperature']),
-                                    alarmAcknowledged: snapshot.data.docs[index]
-                                                .data()['alarmAcknowledged'] ==
-                                            false
-                                        ? false
-                                        : true,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        );
-                      } else
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                            top: 50.0
-
-                          ),
-                          child: Center(
-                              child: Text("No alarms triggered!",
-                                  style: TextStyle(
-                                      fontSize: 22.0,
-                                      color: Color(0xFF86829D)
-                                  )
-                              )
-                          ),
-                        );
-                    }),
-
-                // Description Editing
-                /* FutureBuilder(
+                    )), // Description Editing
+                FutureBuilder(
                   initialData: [],
                   future: _dbHelper.getTriggeredTemperatureTelemetry(
                       sensorLocation, sensorGroup),
@@ -233,7 +141,7 @@ class _SensorPageState extends State<SensorPage> {
                       );
                     }
                   },
-                ), // Triggered alarms list*/
+                ), // Triggered alarms list
               ],
             ),
           ],
